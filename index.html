@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고등학교 지리 연계 - 나의 윤리적 소비 지수 진단</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .custom-radio:checked + label {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+            color: #047857;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-earth-asia text-2xl text-emerald-200"></i>
+                <h1 class="text-xl font-bold tracking-tight">고교 지리 연계 윤리적 소비 지수(ECI) 진단</h1>
+            </div>
+            <span class="text-xs bg-emerald-700 px-3 py-1 rounded-full text-emerald-100 font-medium">지속가능한 생산과 소비</span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Intro Card -->
+        <div id="intro-card" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 mb-8">
+            <div class="flex items-center space-x-3 text-emerald-600 font-bold mb-2">
+                <i class="fa-solid fa-seedling text-lg"></i>
+                <span>지속 가능한 지구와 사회를 만드는 우리의 선택</span>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">나는 어떤 소비자인가요?</h2>
+            <p class="text-slate-600 leading-relaxed mb-6">
+                우리가 소비하는 물건은 어디에서 오고, 누구의 손을 거쳐 우리에게 도착했을까요? 
+                지리 수업 시간에 배운 <strong>글로벌 생산 네트워크, 푸드 마일리지, 로컬리티, 자원 순환</strong>의 개념을 생각하며 
+                나의 평소 소비 성향과 실천을 진단해보세요.
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
+                <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl text-center">
+                    <i class="fa-solid fa-leaf text-emerald-600 text-xl mb-1"></i>
+                    <div class="font-bold text-slate-800">1. 환경·생태</div>
+                    <div class="text-xs text-slate-500">탄소발자국 줄이기</div>
+                </div>
+                <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl text-center">
+                    <i class="fa-solid fa-handshake text-blue-600 text-xl mb-1"></i>
+                    <div class="font-bold text-slate-800">2. 인권·공정무역</div>
+                    <div class="text-xs text-slate-500">착한 가치사슬</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 p-3 rounded-xl text-center">
+                    <i class="fa-solid fa-store text-amber-600 text-xl mb-1"></i>
+                    <div class="font-bold text-slate-800">3. 지역·상생</div>
+                    <div class="text-xs text-slate-500">로컬 푸드 & 공동체</div>
+                </div>
+                <div class="bg-purple-50 border border-purple-100 p-3 rounded-xl text-center">
+                    <i class="fa-solid fa-rotate text-purple-600 text-xl mb-1"></i>
+                    <div class="font-bold text-slate-800">4. 절제·순환</div>
+                    <div class="text-xs text-slate-500">자원 재활용 & 미니멀</div>
+                </div>
+            </div>
+            <button id="start-btn" onclick="startSurvey()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition duration-200 text-lg flex justify-center items-center space-x-2">
+                <span>진단 시작하기 (총 16문항)</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Survey Container -->
+        <div id="survey-container" class="hidden">
+            <!-- Student Info Section -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-user-graduate text-emerald-600 mr-2"></i> 학생 정보 입력 (선택)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">학년 / 반</label>
+                        <input type="text" id="student-class" placeholder="예: 2학년 3반" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">이름 / 번호</label>
+                        <input type="text" id="student-name" placeholder="예: 홍길동 (15번)" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">수강 과목</label>
+                        <select id="student-subject" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="한국지리">한국지리</option>
+                            <option value="세계지리">세계지리</option>
+                            <option value="여행지리">여행지리</option>
+                            <option value="통합사회">통합사회</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survey Form -->
+            <form id="survey-form" class="space-y-6">
+                <!-- Dynamic Questions Inject Here -->
+            </form>
+
+            <div class="mt-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-slate-500">
+                    <i class="fa-solid fa-circle-info text-emerald-600 mr-1"></i> 모든 문항에 답해야 결과가 정확하게 산출됩니다.
+                </div>
+                <button type="button" onclick="calculateResult()" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition duration-200">
+                    윤리적 소비 지수 확인하기 <i class="fa-solid fa-chart-pie ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section" class="hidden space-y-8">
+            <!-- Overall Score Card -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8 text-center relative overflow-hidden">
+                <div id="result-bg-badge" class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-emerald-100 rounded-full opacity-50 pointer-events-none"></div>
+                
+                <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-emerald-100 text-emerald-800 mb-3" id="student-tag">학생 진단 결과</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">나의 윤리적 소비 지수 (ECI)</h2>
+                
+                <div class="my-6 flex justify-center items-baseline">
+                    <span id="total-score" class="text-6xl font-black text-emerald-600">0</span>
+                    <span class="text-2xl font-bold text-slate-400 ml-1">/ 100점</span>
+                </div>
+
+                <div id="grade-container" class="inline-block px-6 py-2 rounded-2xl text-lg font-bold mb-4">
+                    <!-- Grade badge dynamically inserted -->
+                </div>
+
+                <p id="grade-description" class="text-slate-600 max-w-xl mx-auto leading-relaxed text-sm md:text-base">
+                    <!-- Description dynamically inserted -->
+                </p>
+            </div>
+
+            <!-- Detailed Analysis & Chart Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Radar Chart Card -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-1 flex items-center">
+                            <i class="fa-solid fa-chart-radar text-emerald-600 mr-2"></i> 영역별 균형도 분석
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-4">4가지 윤리적 소비 영역별 점수 분포입니다.</p>
+                    </div>
+                    <div class="relative w-full max-w-xs mx-auto aspect-square flex items-center justify-center">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Domain Scores Summary -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center">
+                            <i class="fa-solid fa-list-check text-emerald-600 mr-2"></i> 영역별 득점 상황
+                        </h3>
+                        <div class="space-y-4" id="domain-progress-bars">
+                            <!-- Progress bars dynamic -->
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500">
+                        * 각 영역은 25점 만점으로 환산되어 계산됩니다.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geography Feedback & Action Tips -->
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-book-open text-emerald-600 mr-2"></i> 지리 교과 연계 맞춤 실천 가이드
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="feedback-cards">
+                    <!-- Dynamic feedback cards -->
+                </div>
+            </div>
+
+            <!-- Buttons for Action -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+                <button onclick="copyResult()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-bold px-6 py-3 rounded-xl shadow transition duration-200 flex items-center justify-center space-x-2">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>결과 요약 복사하기 (수업 제출용)</span>
+                </button>
+                <button onclick="resetSurvey()" class="w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-6 py-3 rounded-xl transition duration-200 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>다시 진단하기</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Alert Modal -->
+    <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-xl">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 text-lg mb-2" id="modal-title">알림</h4>
+            <p class="text-slate-600 text-sm mb-6" id="modal-msg">문항을 확인해주세요.</p>
+            <button onclick="closeModal()" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700 transition">확인</button>
+        </div>
+    </div>
+
+    <script>
+        // Survey Data (16 Questions mapped to 4 domains)
+        const questions = [
+            // Domain 1: Green (환경 & 생태)
+            {
+                id: 1,
+                domain: 'green',
+                domainName: '환경·생태 소비',
+                question: '학용품이나 옷, 신발을 살 때 친환경/재활용 소재(PIR, PCR 등) 제품인지 확인한다.',
+                concept: '탄소발자국 & 업사이클링'
+            },
+            {
+                id: 2,
+                domain: 'green',
+                domainName: '환경·생태 소비',
+                question: '음료나 음식을 사 먹을 때 일회용 용기 대신 텀블러나 다회용 용기를 사용하려 노력한다.',
+                concept: '자원 절약 및 쓰레기 감소'
+            },
+            {
+                id: 3,
+                domain: 'green',
+                domainName: '환경·생태 소비',
+                question: '포장재가 너무 과도하지 않거나, 분리배출(재활용)이 용이하게 디자인된 제품을 선호한다.',
+                concept: '친환경 패키징'
+            },
+            {
+                id: 4,
+                domain: 'green',
+                domainName: '환경·생태 소비',
+                question: '가까운 거리를 이동하거나 물품을 구매하러 갈 때 도보, 자전거, 대중교통을 우선 이용한다.',
+                concept: '수송 부문 탄소 배출'
+            },
+
+            // Domain 2: Fair (인권 & 공정무역)
+            {
+                id: 5,
+                domain: 'fair',
+                domainName: '인권·공정무역 소비',
+                question: '초콜릿, 커피, 의류 등을 구매할 때 생산자에게 정당한 대가를 지불하는 공정무역 인증 마크를 확인한다.',
+                concept: '글로벌 가치사슬 & 공정무역'
+            },
+            {
+                id: 6,
+                domain: 'fair',
+                domainName: '인권·공정무역 소비',
+                question: '아동 노동 착취나 열악한 노동 환경 논란이 있는 기업의 제품은 구매하지 않으려고 노력한다.',
+                concept: '세계화와 기업의 사회적 책임'
+            },
+            {
+                id: 7,
+                domain: 'fair',
+                domainName: '인권·공정무역 소비',
+                question: '화장품이나 학용품, 세제 등을 고를 때 불필요한 동물실험을 하지 않은(크루얼티 프리) 제품을 고려한다.',
+                concept: '생명 윤리 및 동물 복지'
+            },
+            {
+                id: 8,
+                domain: 'fair',
+                domainName: '인권·공정무역 소비',
+                question: '내가 사용하는 물건이 개발도상국 생산자의 노동 환경에 어떤 영향을 미치는지 관심이 있다.',
+                concept: '공간적 상호작용과 윤리'
+            },
+
+            // Domain 3: Local (지역 & 상생)
+            {
+                id: 9,
+                domain: 'local',
+                domainName: '지역·상생 소비',
+                question: '대형 온라인 쇼핑몰이나 대기업 매장 외에도 동네 소상공인 점포나 전통시장을 이용하려 노력한다.',
+                concept: '지역 경제 활성화 & 장소성'
+            },
+            {
+                id: 10,
+                domain: 'local',
+                domainName: '지역·상생 소비',
+                question: '식품을 구매할 때 먼 거리를 이동해 온 수입품보다 이동 거리가 짧은 국내산·지역 농산물(로컬푸드)을 선택한다.',
+                concept: '푸드 마일리지 & 먹거리 안전'
+            },
+            {
+                id: 11,
+                domain: 'local',
+                domainName: '지역·상생 소비',
+                question: '사회적 기업, 장애인 자활기업, 또는 지역 자원 봉사 연계 단체의 제품 및 서비스에 관심을 가진다.',
+                concept: '사회적 경제 & 상생'
+            },
+            {
+                id: 12,
+                domain: 'local',
+                domainName: '지역·상생 소비',
+                question: '지역 화폐(지역사랑상품권 등)나 지역 상권 활성화 정책이 우리 동네에 주는 유익함을 알고 활용한다.',
+                concept: '지역 재투자 및 경제 선순환'
+            },
+
+            // Domain 4: Minimal (절제 & 순환)
+            {
+                id: 13,
+                domain: 'minimal',
+                domainName: '절제·순환 소비',
+                question: '물건을 사기 전 단순한 욕구(Want)가 아닌 진짜 필요한 것(Need)인지 다시 한번 고민한다.',
+                concept: '과잉 소비 자제 & 미니멀리즘'
+            },
+            {
+                id: 14,
+                domain: 'minimal',
+                domainName: '절제·순환 소비',
+                question: '유행이 지났다고 해서 멀쩡한 옷이나 학용품, 전자기기를 버리고 새것으로 바꾸지 않는다.',
+                concept: '자원 고갈 및 폐기물 문제'
+            },
+            {
+                id: 15,
+                domain: 'minimal',
+                domainName: '절제·순환 소비',
+                question: '중고 거래 플랫폼(당근마켓, 알뜰장터 등)을 활용해 필요 없어진 물건을 재판매하거나 중고품을 이용해 보았다.',
+                concept: '순환 경제(Circular Economy)'
+            },
+            {
+                id: 16,
+                domain: 'minimal',
+                domainName: '절제·순환 소비',
+                question: '고장 나거나 손상된 물건은 바로 버리기보다 수리나 리폼을 통해 수명을 연장하려고 시도한다.',
+                concept: '제품 수명 주기 연장'
+            }
+        ];
+
+        let radarChartInstance = null;
+
+        // Initialize Survey Form
+        function renderSurvey() {
+            const form = document.getElementById('survey-form');
+            form.innerHTML = '';
+
+            // Group questions by domain
+            const domains = [
+                { id: 'green', name: '1. 환경 및 생태계 보호 (Green)', icon: 'fa-leaf', color: 'emerald' },
+                { id: 'fair', name: '2. 인권 및 공정무역 (Fair)', icon: 'fa-handshake', color: 'blue' },
+                { id: 'local', name: '3. 지역 사회 및 상생 (Local)', icon: 'fa-store', color: 'amber' },
+                { id: 'minimal', name: '4. 절제 및 순환 소비 (Minimal)', icon: 'fa-rotate', color: 'purple' }
+            ];
+
+            domains.forEach(d => {
+                const domainQs = questions.filter(q => q.domain === d.id);
+                
+                const section = document.createElement('div');
+                section.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+                
+                let html = `
+                    <div class="bg-slate-100/70 border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-2 font-bold text-slate-800">
+                            <i class="fa-solid ${d.icon} text-${d.color}-600"></i>
+                            <span>${d.name}</span>
+                        </div>
+                        <span class="text-xs bg-white border border-slate-200 text-slate-500 px-2.5 py-1 rounded-md">4문항</span>
+                    </div>
+                    <div class="p-6 space-y-6">
+                `;
+
+                domainQs.forEach((q, idx) => {
+                    html += `
+                        <div class="border-b border-slate-100 last:border-0 pb-5 last:pb-0">
+                            <div class="flex items-start justify-between mb-2">
+                                <p class="font-medium text-slate-800 text-sm md:text-base">
+                                    <span class="text-emerald-600 font-bold mr-1">Q${q.id}.</span> ${q.question}
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <span class="inline-block text-[11px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded">관련 개념: ${q.concept}</span>
+                            </div>
+                            <div class="grid grid-cols-5 gap-2 text-center text-xs">
+                                ${[1,2,3,4,5].map(val => `
+                                    <div>
+                                        <input type="radio" id="q${q.id}_v${val}" name="q${q.id}" value="${val}" class="hidden custom-radio">
+                                        <label for="q${q.id}_v${val}" class="block py-2.5 border border-slate-200 rounded-lg cursor-pointer transition text-slate-600 hover:bg-slate-50">
+                                            <div class="font-bold text-sm mb-0.5">${val}</div>
+                                            <div class="text-[10px] text-slate-400 font-normal hidden sm:block">
+                                                ${val === 1 ? '매우 아니다' : val === 2 ? '아니다' : val === 3 ? '보통이다' : val === 4 ? '그렇다' : '매우 그렇다'}
+                                            </div>
+                                        </label>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                section.innerHTML = html;
+                form.appendChild(section);
+            });
+        }
+
+        function startSurvey() {
+            document.getElementById('intro-card').classList.add('hidden');
+            document.getElementById('survey-container').classList.remove('hidden');
+            renderSurvey();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showModal(title, msg) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = msg;
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal').classList.remove('flex');
+        }
+
+        function calculateResult() {
+            const domainScores = { green: 0, fair: 0, local: 0, minimal: 0 };
+            const domainCounts = { green: 0, fair: 0, local: 0, minimal: 0 };
+            let unanswered = false;
+
+            questions.forEach(q => {
+                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
+                if (!selected) {
+                    unanswered = true;
+                } else {
+                    const score = parseInt(selected.value);
+                    domainScores[q.domain] += score;
+                    domainCounts[q.domain] += 1;
+                }
+            });
+
+            if (unanswered) {
+                showModal('답변 미완료', '아직 답변하지 않은 문항이 있습니다. 모든 문항에 응답해주세요.');
+                return;
+            }
+
+            // Calculations
+            // Total score: Raw max is 16 * 5 = 80 points.
+            // Convert to 100-point scale: (Total Raw Score / 80) * 100
+            let rawTotal = 0;
+            Object.keys(domainScores).forEach(key => rawTotal += domainScores[key]);
+            const finalScore = Math.round((rawTotal / 80) * 100);
+
+            // Domain max is 4 * 5 = 20 points. Scale each domain to 25 points.
+            const domainFinals = {
+                green: Math.round((domainScores.green / 20) * 25),
+                fair: Math.round((domainScores.fair / 20) * 25),
+                local: Math.round((domainScores.local / 20) * 25),
+                minimal: Math.round((domainScores.minimal / 20) * 25)
+            };
+
+            displayResults(finalScore, domainFinals);
+        }
+
+        function displayResults(total, domainFinals) {
+            document.getElementById('survey-container').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
+
+            // Student tag
+            const sName = document.getElementById('student-name').value.trim();
+            const sClass = document.getElementById('student-class').value.trim();
+            const sSub = document.getElementById('student-subject').value;
+            
+            let tagText = sSub + ' 수강생';
+            if (sClass || sName) {
+                tagText = `${sClass} ${sName} (${sSub})`;
+            }
+            document.getElementById('student-tag').innerText = tagText;
+
+            // Animate Score
+            animateScore(total);
+
+            // Determine Grade
+            let gradeInfo = {};
+            if (total >= 85) {
+                gradeInfo = {
+                    title: '지구 살리기 에이스 (지속가능한 소비 리더)',
+                    color: 'bg-emerald-500 text-white',
+                    desc: '축하합니다! 당신은 공간적 상호작용과 글로벌 가치사슬의 윤리성을 깊이 이해하고 실천하는 최우수 윤리적 소비자입니다. 당신의 소비 습관은 지구 생태계를 보호하고 세계 노동자와 지역 사회에 긍정적인 영향을 미치고 있습니다.'
+                };
+            } else if (total >= 70) {
+                gradeInfo = {
+                    title: '센스 있는 윤리 소비 루키 (성장하는 실천가)',
+                    color: 'bg-blue-500 text-white',
+                    desc: '훌륭합니다! 윤리적 소비의 필요성을 인지하고 있으며 일상 속에서 다방면으로 실천하려 노력하고 있습니다. 조금 더 유심히 상품의 생산 배경과 탄소 발자국을 살펴본다면 완벽한 윤리적 소비자로 거듭날 수 있습니다.'
+                };
+            } else if (total >= 50) {
+                gradeInfo = {
+                    title: '관심이 필요한 소비 새싹 (인식 전환 단계)',
+                    color: 'bg-amber-500 text-white',
+                    desc: '윤리적 소비에 대한 기본 관심은 있으나 편의성이나 가격 때문에 가치 소비를 미루는 경향이 있습니다. 지리 수업에서 배운 로컬푸드 이용이나 공정무역 제품 구매 등 한두 가지 작은 행동부터 시작해보세요!'
+                };
+            } else {
+                gradeInfo = {
+                    title: '지구와 이웃을 생각하는 연습 단계 (시작이 반)',
+                    color: 'bg-rose-500 text-white',
+                    desc: '현재는 개인의 선호나 효율성이 중심이 된 소비 패턴을 보이고 있습니다. 우리가 구매하는 물건 뒤에 숨겨진 환경적 비용과 노동자의 삶을 한 번 돌아보는 지리적 시목(Geographical Eye)을 길러보세요.'
+                };
+            }
+
+            const gradeContainer = document.getElementById('grade-container');
+            gradeContainer.className = `inline-block px-6 py-2 rounded-2xl text-base md:text-lg font-bold mb-4 ${gradeInfo.color}`;
+            gradeContainer.innerText = gradeInfo.title;
+
+            document.getElementById('grade-description').innerText = gradeInfo.desc;
+
+            // Render Radar Chart
+            renderRadarChart(domainFinals);
+
+            // Render Domain Progress Bars
+            renderProgressBars(domainFinals);
+
+            // Render Geo Feedback Cards
+            renderFeedbackCards(domainFinals);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function animateScore(targetScore) {
+            let current = 0;
+            const scoreEl = document.getElementById('total-score');
+            const duration = 1000;
+            const stepTime = 20;
+            const steps = duration / stepTime;
+            const increment = targetScore / steps;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetScore) {
+                    current = targetScore;
+                    clearInterval(timer);
+                }
+                scoreEl.innerText = Math.round(current);
+            }, stepTime);
+        }
+
+        function renderRadarChart(scores) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['환경·생태 (Green)', '인권·공정 (Fair)', '지역·상생 (Local)', '절제·순환 (Minimal)'],
+                    datasets: [{
+                        label: '나의 점수 (25점 만점)',
+                        data: [scores.green, scores.fair, scores.local, scores.minimal],
+                        backgroundColor: 'rgba(16, 185, 129, 0.25)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(16, 185, 129, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e2e8f0' },
+                            grid: { color: '#cbd5e1' },
+                            pointLabels: {
+                                font: { size: 11, family: "'Noto Sans KR', sans-serif", weight: 'bold' },
+                                color: '#334155'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 25,
+                            ticks: { stepSize: 5, display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function renderProgressBars(scores) {
+            const container = document.getElementById('domain-progress-bars');
+            container.innerHTML = '';
+
+            const items = [
+                { key: 'green', name: '1. 환경·생태 (Green)', score: scores.green, color: 'bg-emerald-500' },
+                { key: 'fair', name: '2. 인권·공정무역 (Fair)', score: scores.fair, color: 'bg-blue-500' },
+                { key: 'local', name: '3. 지역·상생 (Local)', score: scores.local, color: 'bg-amber-500' },
+                { key: 'minimal', name: '4. 절제·순환 (Minimal)', score: scores.minimal, color: 'bg-purple-500' }
+            ];
+
+            items.forEach(item => {
+                const percent = Math.round((item.score / 25) * 100);
+                const html = `
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                            <span>${item.name}</span>
+                            <span>${item.score} / 25점 (${percent}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="${item.color} h-2.5 rounded-full transition-all duration-1000" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function renderFeedbackCards(scores) {
+            const container = document.getElementById('feedback-cards');
+            container.innerHTML = '';
+
+            const feedbacks = [
+                {
+                    key: 'green',
+                    title: '환경·생태 소비 가이드',
+                    icon: 'fa-leaf',
+                    color: 'emerald',
+                    concept: '탄소발자국 & 수송 에너지',
+                    tip: scores.green < 18 
+                        ? '제품의 생산 과정 및 수송 과정에서 발생하는 Carbon Footprint를 고려해보세요. 학용품 구매 시 친환경 재활용 인증을 체크하는 행동부터 시작할 수 있습니다.'
+                        : '우수한 환경 의식을 가지고 계시네요! 사용하지 않는 플라스틱 용기를 점차 감축하고 수송 탄소를 줄이기 위한 도보·자전거 이용을 주위에 권장해보세요.'
+                },
+                {
+                    key: 'fair',
+                    title: '인권·공정무역 가이드',
+                    icon: 'fa-handshake',
+                    color: 'blue',
+                    concept: '글로벌 생산 네트워크 & 불평등',
+                    tip: scores.fair < 18 
+                        ? '세계화로 인해 소비 공간과 생산 공간이 분리되어 있습니다. 개발도상국 생산자의 적정 임금을 보장하는 Fair Trade 인증 초콜릿이나 의류에 관심을 가져보세요.'
+                        : '글로벌 시민의식이 매우 높습니다. 기업의 인권 침해나 불공정 노동 환경을 모니터링하고 착한 기업 제품을 지지하는 가치 소비를 계속 유지해주세요.'
+                },
+                {
+                    key: 'local',
+                    title: '지역·상생 소비 가이드',
+                    icon: 'fa-store',
+                    color: 'amber',
+                    concept: '푸드 마일리지 & 장소성',
+                    tip: scores.local < 18 
+                        ? '식품 구매 시 이동 거리가 적은 국내산 로컬 푸드를 선택하면 푸드 마일리지(이동거리×수송량)가 줄어들어 지구온난화 방지와 지역 농가 상생에 도움이 됩니다.'
+                        : '지역 경제와 공동체의 가치를 깊이 이해하고 계시네요! 우리 동네 전통시장이나 지역 화폐 활용을 통해 지역 자본 선순환에 계속 기여해주세요.'
+                },
+                {
+                    key: 'minimal',
+                    title: '절제·순환 소비 가이드',
+                    icon: 'fa-rotate',
+                    color: 'purple',
+                    concept: '자원 순환 & 지속가능한 발전',
+                    tip: scores.minimal < 18 
+                        ? '물건을 구매하기 전 "Need(필요)"와 "Want(욕구)"를 구별해보세요. 중고 거래 플랫폼 활용이나 고쳐 쓰기는 자원 고갈 속도를 늦추는 가장 쉬운 방법입니다.'
+                        : '훌륭한 자원 순환 실천가입니다! 물건의 수명 주기를 늘리는 미니멀리즘 소비 문화를 친구들과 나누고 업사이클링 활동에도 참여해보세요.'
+                }
+            ];
+
+            feedbacks.forEach(f => {
+                const html = `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-2 text-${f.color}-600 font-bold mb-1 text-sm">
+                                <i class="fa-solid ${f.icon}"></i>
+                                <span>${f.title}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 font-medium mb-2">지리 개념: ${f.concept}</div>
+                            <p class="text-xs text-slate-600 leading-relaxed">${f.tip}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function copyResult() {
+            const score = document.getElementById('total-score').innerText;
+            const tag = document.getElementById('student-tag').innerText;
+            const grade = document.getElementById('grade-container').innerText;
+
+            const text = `[고교 지리 윤리적 소비 지수 진단 결과]\n- 대상: ${tag}\n- 종합 윤리적 소비 지수: ${score}점 / 100점\n- 유형 및 등급: ${grade}\n\n* 본 결과는 고등학교 지리 교과(지속가능한 생산과 소비) 연계 웹사이트에서 산출되었습니다.`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showModal('복사 완료', '결과 요약이 클립보드에 복사되었습니다. 제출용 문서나 제출란에 붙여넣기(Ctrl+V)하세요.');
+            }).catch(() => {
+                // Fallback for document.execCommand
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showModal('복사 완료', '결과 요약이 클립보드에 복사되었습니다.');
+            });
+        }
+
+        function resetSurvey() {
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('intro-card').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
